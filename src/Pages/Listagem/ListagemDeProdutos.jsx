@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Typography, Card, CardContent, CardActions, Button } from "@mui/material";
+import { Container, Typography, TextField, Card, CardContent, CardActions, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import styles from "./ListagemDeProdutos.module.css";
 
 function ListagemDeProdutos() {
   const [produtos, setProdutos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // estado para pesquisa
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,14 +37,28 @@ function ListagemDeProdutos() {
     navigate(`/editar/${id}`);
   };
 
+  // Filtra os produtos pelo nome
+  const filteredProdutos = produtos.filter((produto) =>
+    produto.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <Container className={styles.container}>
       <Typography variant="h4" className={styles.title}>
         Lista de Produtos
       </Typography>
 
+      {/* Campo de pesquisa */}
+      <TextField
+        fullWidth
+        label="Pesquisar produtos"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        margin="normal"
+      />
+
       <div className={styles.cardsContainer}>
-        {produtos.map((produto) => (
+        {filteredProdutos.map((produto) => (
           <Card className={styles.card} key={produto.id}>
             <img
               src={produto.imagem}
