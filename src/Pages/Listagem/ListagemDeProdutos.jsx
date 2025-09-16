@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Typography, Card, CardContent, CardActions, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import styles from "./ListagemDeProdutos.module.css";
 
 function ListagemDeProdutos() {
   const [produtos, setProdutos] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProdutos = async () => {
@@ -19,19 +21,19 @@ function ListagemDeProdutos() {
   }, []);
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Tem certeza que deseja excluir este produto?"
-    );
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir este produto?");
     if (!confirmDelete) return;
 
     try {
       await axios.delete(`http://localhost:3001/produtos/${id}`);
-      setProdutos((prevProdutos) =>
-        prevProdutos.filter((produto) => produto.id !== id)
-      );
+      setProdutos((prev) => prev.filter((p) => p.id !== id));
     } catch (error) {
       console.error("Erro ao excluir produto:", error);
     }
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/editar/${id}`);
   };
 
   return (
@@ -56,8 +58,12 @@ function ListagemDeProdutos() {
             </CardContent>
 
             <CardActions className={styles.cardActions}>
-              <Button size="small" variant="outlined" color="primary">Editar</Button>
-              <Button size="small" variant="outlined" color="error" onClick={() => handleDelete(produto.id)}>Deletar</Button>
+              <Button size="small" variant="outlined" color="primary" onClick={() => handleEdit(produto.id)}>
+                Editar
+              </Button>
+              <Button size="small" variant="outlined" color="error" onClick={() => handleDelete(produto.id)}>
+                Deletar
+              </Button>
             </CardActions>
           </Card>
         ))}
