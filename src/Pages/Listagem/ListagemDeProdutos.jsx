@@ -18,6 +18,22 @@ function ListagemDeProdutos() {
     fetchProdutos();
   }, []);
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Tem certeza que deseja excluir este produto?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:3001/produtos/${id}`);
+      setProdutos((prevProdutos) =>
+        prevProdutos.filter((produto) => produto.id !== id)
+      );
+    } catch (error) {
+      console.error("Erro ao excluir produto:", error);
+    }
+  };
+
   return (
     <Container className={styles.container}>
       <Typography variant="h4" className={styles.title}>
@@ -41,7 +57,7 @@ function ListagemDeProdutos() {
 
             <CardActions className={styles.cardActions}>
               <Button size="small" variant="outlined" color="primary">Editar</Button>
-              <Button size="small" variant="outlined" color="error">Deletar</Button>
+              <Button size="small" variant="outlined" color="error" onClick={() => handleDelete(produto.id)}>Deletar</Button>
             </CardActions>
           </Card>
         ))}
